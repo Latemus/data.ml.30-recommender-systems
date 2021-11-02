@@ -6,18 +6,15 @@ from sklearn.neighbors import NearestNeighbors
 ### For performance and accuracy reasons following tresholds can be used:
 NUMBER_OF_NEIGHBORS = 30         # Number of most similar users to use in the esimation
 
+TARGET_USER = 1                     # User to which we find rating prediction
+TARGET_MOVIE_NAME = "Toy Story (1995)"    # Movie that we want to predict a rating
 
 # In this program a dataset of movie reviews is read from .cvs file and then 
 # user-based collaborative filtering is done to predict users rating for a movie
 def cosine_similarity_method():
-    TARGET_USER = 1                     # User to which we find rating prediction
-    TARGET_MOVIE_NAME = "Toy Story (1995)"    # Movie that we want to predict a rating
-    TARGET_MOVIE_ID = 1    # Movie that we want to predict a rating
-    
     # First import the dataset. It contains 4 columns: userId, movieId, rating, and timestamp
     ratings = pd.read_csv('./dataset/ml-latest-small/ratings.csv')
     movies = pd.read_csv('./dataset/ml-latest-small/movies.csv')
-
 
     ratings = ratings.copy()
     ratingsWithMovies = ratings.merge(movies, on='movieId')
@@ -28,9 +25,7 @@ def cosine_similarity_method():
     nearestNeighbor.fit(pivotedRatingss.values)
     distances, indices = nearestNeighbor.kneighbors(pivotedRatingss, n_neighbors = NUMBER_OF_NEIGHBORS + 1) # One is added, as the target movie still exists on this set and is removed later
 
-
     targetIndex = pivotedRatingss.index.tolist().index(TARGET_MOVIE_NAME)
-    print('targetIndex', targetIndex)
 
     nearestMovies = indices[targetIndex].tolist()
     distanceToOthers = distances[targetIndex].tolist()
@@ -40,15 +35,28 @@ def cosine_similarity_method():
     nearestMovies.remove(targetIndex)
     distanceToOthers.pop(moviesId)
 
-    # 
+    # zip results to a list of tuples: (movieId, distance)
     similarMovies = list(zip(nearestMovies, distanceToOthers))
 
     # Show the results for the nearest movies and shortest distances
-    print(f'The Nearest Movies to {TARGET_MOVIE_NAME} :\n{similarMovies}')
+    printSimilarMovies(similarMovies)
+    
 
-    usersIndex = pivotedRatingss.columns.tolist().index(TARGET_USER)
+
+# Prints movieRecommendations as a list
+def printSimilarMovies(similarMovies):
+    print(f'The Nearest Movies to {TARGET_MOVIE_NAME} :\n')
+    for movie in similarMovies:
+        print(f'MovieId: {movie[0]}\tcosine distance: {movie[1]}')
 
 cosine_similarity_method()
+
+
+
+
+
+
+
 
 
 

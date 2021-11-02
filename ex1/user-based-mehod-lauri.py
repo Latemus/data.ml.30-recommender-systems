@@ -6,20 +6,25 @@ from math import sqrt
 NUMBER_OF_SIMILAR_USERS_TO_USE = 10         # Number of most similar users to use in the esimation
 MIN_COMMON_RATINGS_BETWEEN_USERS = 0        # (FOR ACCURACITY) to only take into account other users, that have at least this much common ratings with target user
 MAX_COUNT_OF_USERS_TO_CHECK = 0             # (FOR TESTING PERFORMANCE) to only go through first n amount of users in the dataset
-MAX_COUNT_OF_MOVIES_TO_CHECK = 100          # (FOR TESTING PERFORMANCE) to only go through first n amount of movies in the dataset
+MAX_COUNT_OF_MOVIES_TO_CHECK = 50           # (FOR TESTING PERFORMANCE) to only go through first n amount of movies in the dataset
+NUMBER_OF_MOVIE_RECOMMENDATIONS = 20        # How many movies are recommended
 
 
 
 # In this program a dataset of movie reviews is read from .cvs file and then 
 # user-based collaborative filtering is done to predict users rating for a movie
 def main():
-    TARGET_USER = 1     # User to which we find rating prediction
-    TARGET_MOVIE = 5    # Movie that we want to predict a rating
+    TARGET_USER = 15     # User to which we find rating prediction
+    TARGET_MOVIE = 1    # Movie that we want to predict a rating
     PEARSONS_CORRELATION_OTHER_USER = 3 # Other user to which pearsons correlation is calculated below
+
 
     # First import the dataset. It contains 4 columns: userId, movieId, rating, and timestamp
     ratings = pd.read_csv('./dataset/ml-latest-small/ratings.csv')
     movies = pd.read_csv('./dataset/ml-latest-small/movies.csv')
+    
+    # toyStoryId = movies[movies.title == 'Toy Story (1995)'].movieId.iloc[0]
+    # print(toyStoryId)
 
     # Print five first lines of this set to check that we have right dataset and then count of rows it contains
     print('First five rows of this dataset:')
@@ -159,7 +164,7 @@ def getUsersMovieRecommendations(movies, ratings, targetUser):
     
     # Sort returned recommendations and return first 
     movieRecommendations.sort(reverse=True)
-    printMovieRecommendations(movieRecommendations[:10])
+    printMovieRecommendations(movieRecommendations[:NUMBER_OF_MOVIE_RECOMMENDATIONS])
     
 
 
